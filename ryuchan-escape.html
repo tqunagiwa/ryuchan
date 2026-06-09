@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>龍の秘伝スープを取り戻せ | 横浜謎解き</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;700&display=swap');
+
+:root{
+  --bg:#0d0b08; --panel:#1a1612; --warm:#201c17; --warm2:#2a2418;
+  --gold:#c8a84b; --gold2:#e8c870; --golddim:#7a6428; --goldglow:rgba(200,168,75,.22);
+  --red:#aa2a1a; --cream:#ede8df; --muted:#7a7060; --border:#2e2820;
+  --steam:rgba(200,168,75,.18);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{background:var(--bg);color:var(--cream);font-family:'Noto Sans JP',sans-serif;
+  max-width:480px;margin:0 auto;min-height:100vh;overflow-x:hidden;user-select:none;}
+
+.screen{display:none;flex-direction:column;min-height:100vh;}
+.screen.active{display:flex;}
+
+/* ── TITLE ── */
+#s-title{
+  align-items:center;justify-content:center;padding:52px 28px 44px;text-align:center;
+  background:radial-gradient(ellipse at 50% 35%,#1e1508 0%,#0d0b08 68%);
+  position:relative;overflow:hidden;gap:0;
+}
+.title-bg-kanji{
+  position:absolute;font-family:'Noto Serif JP',serif;font-size:340px;font-weight:900;
+  color:rgba(200,168,75,.032);top:50%;left:50%;transform:translate(-50%,-50%);
+  pointer-events:none;line-height:1;
+}
+.title-emblem{
+  width:88px;height:88px;border:1.5px solid var(--gold);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;margin-bottom:28px;
+  position:relative;animation:emblemPulse 3.5s ease-in-out infinite;
+}
+.title-emblem::before{
+  content:'';position:absolute;inset:6px;border:1px solid var(--golddim);border-radius:50%;opacity:.5;
+}
+@keyframes emblemPulse{
+  0%,100%{box-shadow:0 0 16px var(--goldglow)}
+  50%{box-shadow:0 0 36px rgba(200,168,75,.45),0 0 60px rgba(200,168,75,.15)}
+}
+.emblem-char{font-family:'Noto Serif JP',serif;font-size:40px;font-weight:900;color:var(--gold);}
+.t-badge{font-size:9px;letter-spacing:.55em;color:var(--golddim);text-transform:uppercase;margin-bottom:22px;}
+.t-rule{width:44px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:18px auto;}
+.t-copy-sm{font-family:'Noto Serif JP',serif;font-size:13px;font-weight:700;
+  color:var(--gold);line-height:2.1;letter-spacing:.06em;margin-bottom:6px;}
+.t-copy-lg{font-family:'Noto Serif JP',serif;font-size:24px;font-weight:900;
+  line-height:1.6;margin-bottom:36px;}
+.t-copy-lg em{color:var(--gold);font-style:normal;}
+.btn-primary{
+  background:none;border:1px solid var(--gold);color:var(--gold);
+  font-family:'Noto Serif JP',serif;font-size:14px;font-weight:700;
+  letter-spacing:.25em;padding:14px 0;cursor:pointer;transition:.2s;
+  width:100%;max-width:260px;margin-bottom:10px;
+}
+.btn-primary:active{background:var(--gold);color:var(--bg);}
+.btn-sub{
+  background:none;border:1px solid var(--border);color:var(--muted);
+  font-family:'Noto Sans JP',sans-serif;font-size:12px;letter-spacing:.1em;
+  padding:11px 0;cursor:pointer;width:100%;max-width:260px;
+}
+
+/* ── STORY ── */
+#s-story{padding:56px 28px 44px;justify-content:center;}
+.s-eyebrow{font-size:9px;letter-spacing:.55em;color:var(--golddim);text-transform:uppercase;margin-bottom:22px;}
+.s-body{font-family:'Noto Serif JP',serif;font-size:15px;line-height:2.4;color:var(--cream);}
+.s-body p{margin-bottom:1.1em;}
+.s-body strong{color:var(--gold);}
+.s-cta{margin-top:36px;border-top:1px solid var(--border);padding-top:28px;}
+
+/* ── GAME HEADER ── */
+.g-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:11px 16px;background:var(--panel);border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:30;
+}
+.g-scene-nm{font-size:11px;letter-spacing:.2em;color:var(--gold);}
+.g-dots{display:flex;gap:5px;}
+.gdot{width:7px;height:7px;border-radius:50%;border:1px solid var(--border);}
+.gdot.done{background:var(--gold);border-color:var(--gold);}
+.gdot.now{border-color:var(--gold);box-shadow:0 0 5px var(--gold);}
+
+/* ── SCENE VIEWPORT ── */
+.scene-wrap{position:relative;width:100%;aspect-ratio:4/3;overflow:hidden;flex-shrink:0;background:#080605;}
+.scene-wrap svg{width:100%;height:100%;display:block;}
+
+/* hotspot */
+.hs{position:absolute;border-radius:50%;transform:translate(-50%,-50%);cursor:pointer;z-index:5;}
+.hs-ring{
+  position:absolute;inset:0;border-radius:50%;
+  border:1.5px solid rgba(200,168,75,.6);
+  animation:hsAnim 2.8s ease-in-out infinite;
+}
+@keyframes hsAnim{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.4);opacity:.12}}
+.hs.collected .hs-ring{display:none;}
+
+/* ── BOTTOM PANEL ── */
+.b-panel{flex:1;background:var(--panel);border-top:1px solid var(--border);display:flex;flex-direction:column;min-height:180px;}
+.msg-area{padding:14px 16px 10px;min-height:74px;border-bottom:1px solid var(--border);}
+.msg-txt{font-family:'Noto Serif JP',serif;font-size:13px;line-height:1.95;color:var(--cream);}
+.msg-txt .hi{color:var(--gold);}
+.msg-txt .warn{color:#e07050;}
+
+/* inventory */
+.inv-bar{
+  display:flex;align-items:center;padding:8px 12px;gap:8px;
+  border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;min-height:60px;
+}
+.inv-bar::-webkit-scrollbar{display:none;}
+.inv-lbl{font-size:9px;letter-spacing:.35em;color:var(--muted);white-space:nowrap;flex-shrink:0;}
+.inv-slot{
+  width:42px;height:42px;background:var(--warm);border:1px solid var(--border);
+  border-radius:3px;display:flex;align-items:center;justify-content:center;
+  font-size:20px;cursor:pointer;flex-shrink:0;position:relative;transition:.15s;
+}
+.inv-slot:active,.inv-slot.sel{border-color:var(--gold);box-shadow:0 0 8px var(--goldglow);}
+.inv-slot .tip{
+  position:absolute;bottom:-17px;left:50%;transform:translateX(-50%);
+  font-size:8px;color:var(--muted);white-space:nowrap;pointer-events:none;
+}
+
+/* action row */
+.act-row{display:flex;gap:1px;margin-top:auto;}
+.act-btn{
+  flex:1;background:var(--warm);border:none;border-top:1px solid var(--border);
+  color:var(--muted);font-family:'Noto Sans JP',sans-serif;font-size:11px;
+  padding:12px 4px;cursor:pointer;letter-spacing:.06em;transition:.15s;
+}
+.act-btn:active,.act-btn.on{background:var(--border);color:var(--gold);}
+
+/* ── COMBINE OVERLAY ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:50;
+  display:none;align-items:center;justify-content:center;padding:20px;}
+.overlay.open{display:flex;}
+.modal{background:var(--panel);border:1px solid var(--border);width:100%;max-width:340px;padding:22px;}
+.modal-ttl{font-family:'Noto Serif JP',serif;font-size:13px;color:var(--gold);
+  letter-spacing:.15em;margin-bottom:18px;text-align:center;}
+.comb-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:16px;}
+.cslot{
+  width:60px;height:60px;background:var(--warm);border:1px dashed var(--border);
+  border-radius:3px;display:flex;align-items:center;justify-content:center;
+  font-size:26px;position:relative;
+}
+.cslot.fill{border-style:solid;border-color:var(--golddim);}
+.cslot-x{position:absolute;top:2px;right:4px;font-size:9px;color:var(--muted);cursor:pointer;}
+.cplus{font-size:16px;color:var(--border);}
+.ci-grid{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px;justify-content:center;}
+.ci-btn{
+  width:46px;height:46px;background:var(--warm);border:1px solid var(--border);
+  border-radius:3px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:20px;cursor:pointer;transition:.12s;
+}
+.ci-btn span{font-size:8px;color:var(--muted);margin-top:2px;}
+.ci-btn:active{border-color:var(--gold);}
+.m-btns{display:flex;gap:7px;}
+.mbtn{flex:1;padding:10px;border:none;cursor:pointer;font-family:'Noto Sans JP',sans-serif;font-size:12px;letter-spacing:.06em;}
+.mbtn-c{background:var(--warm);color:var(--muted);}
+.mbtn-ok{background:var(--gold);color:var(--bg);font-weight:700;}
+.mbtn-ok:disabled{background:var(--border);color:var(--muted);cursor:not-allowed;}
+
+/* ── INPUT OVERLAY ── */
+#inputModal .modal{max-width:320px;}
+.inp-q{font-family:'Noto Serif JP',serif;font-size:14px;line-height:2;color:var(--cream);margin-bottom:18px;}
+.inp-q strong{color:var(--gold);}
+.ans-inp{
+  width:100%;background:var(--warm);border:1px solid var(--border);
+  color:var(--cream);font-family:'Noto Serif JP',serif;font-size:20px;
+  letter-spacing:.25em;padding:12px;text-align:center;outline:none;margin-bottom:10px;
+}
+.ans-inp:focus{border-color:var(--golddim);}
+.ans-fb{font-size:11px;height:16px;margin-bottom:10px;text-align:center;}
+.ans-fb.ok{color:var(--gold);} .ans-fb.ng{color:#e05040;}
+
+/* ── EXAMINE OVERLAY ── */
+#examineModal .modal{max-width:340px;}
+.exam-scene{
+  width:100%;aspect-ratio:3/2;background:var(--warm);margin-bottom:16px;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  border:1px solid var(--border);
+}
+.exam-scene svg{width:100%;height:100%;}
+.exam-desc{font-family:'Noto Serif JP',serif;font-size:13px;line-height:1.95;color:var(--cream);margin-bottom:16px;}
+.exam-desc strong{color:var(--gold);}
+
+/* ── ITEM GET OVERLAY ── */
+#itemGetModal .modal{max-width:300px;text-align:center;}
+.item-get-icon{font-size:54px;margin-bottom:12px;animation:itemPop .4s ease-out;}
+@keyframes itemPop{0%{transform:scale(.5);opacity:0}80%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+.item-get-name{font-family:'Noto Serif JP',serif;font-size:16px;font-weight:700;color:var(--gold);margin-bottom:6px;}
+.item-get-desc{font-size:12px;color:var(--muted);line-height:1.8;margin-bottom:18px;}
+
+/* ── CIPHER OVERLAY ── */
+#cipherModal .modal{max-width:340px;}
+.cipher-board{
+  background:var(--warm);border:1px solid var(--border);padding:16px;
+  margin-bottom:14px;font-family:monospace;
+}
+.cipher-key{display:flex;gap:12px;justify-content:center;margin-bottom:10px;flex-wrap:wrap;}
+.cipher-k{font-size:12px;color:var(--muted);}
+.cipher-k span{color:var(--gold);}
+.cipher-code{font-size:22px;letter-spacing:.3em;color:var(--cream);text-align:center;margin-top:8px;}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(14px);
+  background:var(--gold);color:var(--bg);font-family:'Noto Serif JP',serif;
+  font-size:12px;font-weight:700;padding:9px 22px;
+  opacity:0;transition:.28s;z-index:100;white-space:nowrap;pointer-events:none;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── SEAL BREAK ── */
+.seal-fx{
+  position:fixed;inset:0;z-index:90;pointer-events:none;
+  display:none;align-items:center;justify-content:center;
+}
+.seal-fx.show{display:flex;animation:sealBreak .7s forwards;}
+@keyframes sealBreak{
+  0%{background:rgba(200,168,75,0)}
+  30%{background:rgba(200,168,75,.18)}
+  100%{background:rgba(200,168,75,0)}
+}
+.seal-txt{font-family:'Noto Serif JP',serif;font-size:18px;font-weight:900;
+  color:var(--gold);letter-spacing:.3em;
+  animation:sealTxt .7s forwards;}
+@keyframes sealTxt{0%{opacity:0;transform:scale(.8)}40%{opacity:1;transform:scale(1.05)}100%{opacity:0;transform:scale(1.2)}}
+
+/* ── CLEAR ── */
+#s-clear{
+  align-items:center;justify-content:center;padding:44px 28px;text-align:center;
+  background:radial-gradient(ellipse at 50% 38%,#201808 0%,#0d0b08 68%);
+}
+.cl-ring{
+  width:108px;height:108px;border:2px solid var(--gold);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;margin:0 auto 26px;
+  animation:clGlow 2.5s ease-in-out infinite;
+}
+@keyframes clGlow{0%,100%{box-shadow:0 0 18px rgba(200,168,75,.28)}50%{box-shadow:0 0 50px rgba(200,168,75,.7),0 0 80px rgba(200,168,75,.18)}}
+.cl-kanji{font-family:'Noto Serif JP',serif;font-size:52px;font-weight:900;color:var(--gold);}
+.cl-h{font-family:'Noto Serif JP',serif;font-size:21px;font-weight:900;margin-bottom:8px;}
+.cl-p{font-size:12px;color:var(--muted);line-height:1.95;margin-bottom:28px;}
+.coupon{
+  background:var(--panel);border:1px solid var(--gold);padding:22px 20px;
+  width:100%;max-width:290px;margin:0 auto 22px;position:relative;
+}
+.coupon::before,.coupon::after{
+  content:'';position:absolute;width:17px;height:17px;border-radius:50%;
+  background:var(--bg);top:50%;transform:translateY(-50%);border:1px solid var(--gold);
+}
+.coupon::before{left:-8px;} .coupon::after{right:-8px;}
+.cp-lbl{font-size:9px;letter-spacing:.5em;color:var(--golddim);margin-bottom:8px;}
+.cp-cnt{font-family:'Noto Serif JP',serif;font-size:14px;font-weight:700;margin-bottom:12px;line-height:1.7;}
+.cp-div{border:none;border-top:1px dashed var(--border);margin:10px 0;}
+.cp-no{font-family:'Noto Serif JP',serif;font-size:26px;font-weight:900;color:var(--gold);letter-spacing:.1em;}
+.cp-no-lbl{font-size:9px;letter-spacing:.3em;color:var(--muted);margin-top:2px;}
+.cp-note{font-size:9px;color:var(--muted);line-height:1.8;margin-top:10px;}
+.t-rule{width:44px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:18px auto;}
+</style>
+</head>
+<body>
+
+<!-- SEAL BREAK FX -->
+<div class="seal-fx" id="sealFx"><span class="seal-txt">封印解除</span></div>
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- COMBINE OVERLAY -->
+<div class="overlay" id="combModal">
+  <div class="modal">
+    <div class="modal-ttl">── アイテムを組み合わせる ──</div>
+    <div class="comb-row">
+      <div class="cslot" id="cs0"><span class="cslot-x" onclick="clearSlot(0)">✕</span><span id="cs0i"></span></div>
+      <div class="cplus">＋</div>
+      <div class="cslot" id="cs1"><span class="cslot-x" onclick="clearSlot(1)">✕</span><span id="cs1i"></span></div>
+    </div>
+    <div class="ci-grid" id="ciGrid"></div>
+    <div class="m-btns">
+      <button class="mbtn mbtn-c" onclick="closeOv('combModal')">戻る</button>
+      <button class="mbtn mbtn-ok" id="combOk" onclick="tryCombine()" disabled>組み合わせる</button>
+    </div>
+  </div>
+</div>
+
+<!-- INPUT OVERLAY -->
+<div class="overlay" id="inputModal">
+  <div class="modal">
+    <div class="inp-q" id="inpQ"></div>
+    <input class="ans-inp" id="ansInp" type="text" maxlength="10" autocomplete="off">
+    <div class="ans-fb" id="ansFb"></div>
+    <div class="m-btns">
+      <button class="mbtn mbtn-c" onclick="closeOv('inputModal')">戻る</button>
+      <button class="mbtn mbtn-ok" onclick="submitAns()">答える</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXAMINE OVERLAY -->
+<div class="overlay" id="examineModal">
+  <div class="modal">
+    <div class="exam-scene" id="examScene"></div>
+    <div class="exam-desc" id="examDesc"></div>
+    <div class="m-btns">
+      <button class="mbtn mbtn-c" onclick="closeOv('examineModal')">戻る</button>
+      <button class="mbtn mbtn-ok" id="examOk" onclick="examTake()">手に取る</button>
+    </div>
+  </div>
+</div>
+
+<!-- ITEM GET OVERLAY -->
+<div class="overlay" id="itemGetModal">
+  <div class="modal">
+    <div class="item-get-icon" id="igIcon"></div>
+    <div class="item-get-name" id="igName"></div>
+    <div class="item-get-desc" id="igDesc"></div>
+    <div class="m-btns">
+      <button class="mbtn mbtn-ok" style="width:100%" onclick="closeOv('itemGetModal')">インベントリに追加</button>
+    </div>
+  </div>
+</div>
+
+<!-- CIPHER OVERLAY -->
+<div class="overlay" id="cipherModal">
+  <div class="modal">
+    <div class="modal-ttl">── 暗号板 ──</div>
+    <div class="cipher-board">
+      <div class="cipher-key">
+        <span class="cipher-k">🔥=<span>1</span></span>
+        <span class="cipher-k">💧=<span>5</span></span>
+        <span class="cipher-k">🌙=<span>0</span></span>
+        <span class="cipher-k">⭐=<span>3</span></span>
+      </div>
+      <div style="border-top:1px solid var(--border);padding-top:10px;">
+        <div style="font-size:10px;color:var(--muted);text-align:center;margin-bottom:8px;">金庫の番号</div>
+        <div class="cipher-code">⭐ 🔥 💧 🌙</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);line-height:1.8;margin-bottom:16px;text-align:center;">
+      記号を数字に置き換えると<br>4桁の番号がわかる。
+    </div>
+    <button class="mbtn mbtn-c" style="width:100%" onclick="closeOv('cipherModal')">閉じる</button>
+  </div>
+</div>
+
+<!-- ===== TITLE ===== -->
+<div class="screen active" id="s-title">
+  <div class="title-bg-kanji">龍</div>
+  <div class="title-emblem"><span class="emblem-char">龍</span></div>
+  <div class="t-badge">Yokohama Mystery · 横浜謎解き</div>
+  <div class="t-rule"></div>
+  <div class="t-copy-sm">横浜のとあるラーメン屋から<br>「龍の秘伝スープ」が何者かに奪われた。</div>
+  <div class="t-rule"></div>
+  <div class="t-copy-lg">隠された謎を解き<br><em>スープを取り戻せ。</em></div>
+  <button class="btn-primary" onclick="go('s-story')">謎解きを始める</button>
+  <button class="btn-sub" onclick="go('s-howto')">遊び方</button>
+</div>
+
+<!-- ===== HOW TO ===== -->
+<div class="screen" id="s-howto">
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:52px 28px 40px;">
+    <div class="s-eyebrow">── How to Play ──</div>
+    <div style="font-family:'Noto Serif JP',serif;font-size:14px;line-height:2.3;color:var(--cream);">
+      <p>🔍 <strong style="color:var(--gold)">光っている場所をタップ</strong>して調べよう。アイテムを発見できる。</p>
+      <p>🎒 <strong style="color:var(--gold)">持ち物</strong>に入ったアイテムはタップして確認できる。</p>
+      <p>⚗️ <strong style="color:var(--gold)">組み合わせる</strong>ボタンで2つのアイテムを合わせられる。</p>
+      <p>🚪 <strong style="color:var(--gold)">移動</strong>ボタンで別の場所へ行ける。</p>
+      <p style="color:var(--muted);font-size:12px;">※ 最後の謎だけは、実際に龍ちゃんへ来店が必要です。</p>
+    </div>
+    <div style="margin-top:32px;border-top:1px solid var(--border);padding-top:24px;">
+      <button class="btn-primary" onclick="go('s-title')">タイトルへ戻る</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== STORY ===== -->
+<div class="screen" id="s-story">
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:56px 28px 40px;">
+    <div class="s-eyebrow">── Prologue ──</div>
+    <div class="s-body">
+      <p>横浜・港南台。<br>その一角に、<strong>創業29年</strong>の老舗ラーメン店がある。</p>
+      <p>店の名は──<strong>「龍ちゃん」</strong>。</p>
+      <p>背脂が踊る、秘伝の一杯。<br>その味を守ってきたレシピが、今夜<strong>何者かに奪われた。</strong></p>
+      <p>犯人が厨房に残した5つの手がかり。<br>それを辿れば、スープを取り戻せる。</p>
+      <p style="color:var(--gold);font-weight:700;">──あなたは、救世主になれるか。</p>
+    </div>
+    <div class="s-cta">
+      <button class="btn-primary" onclick="startGame()">厨房へ踏み込む</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== GAME ===== -->
+<div class="screen" id="s-game">
+  <div class="g-head">
+    <span class="g-scene-nm" id="gName">龍ちゃん・厨房</span>
+    <div class="g-dots" id="gDots"></div>
+  </div>
+  <div class="scene-wrap" id="sceneWrap"></div>
+  <div class="b-panel">
+    <div class="msg-area"><div class="msg-txt" id="msgTxt">光っている場所をタップして調べよう。</div></div>
+    <div class="inv-bar">
+      <span class="inv-lbl">持ち物</span>
+      <div id="invRow" style="display:flex;gap:7px;flex-wrap:nowrap;"></div>
+    </div>
+    <div class="act-row">
+      <button class="act-btn on" id="btnUse" onclick="setMode('use')">🔍 使う／調べる</button>
+      <button class="act-btn" id="btnComb" onclick="openCombine()">⚗️ 組み合わせる</button>
+      <button class="act-btn" id="btnMove" onclick="openMoveMenu()">🚪 移動</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CLEAR ===== -->
+<div class="screen" id="s-clear">
+  <div class="cl-ring"><span class="cl-kanji">龍</span></div>
+  <div class="cl-h">救世主、現る。</div>
+  <div class="cl-p">すべての封印が解かれた。<br>龍の秘伝スープは守られた。<br>横浜が、あなたに感謝する。</div>
+  <div class="coupon">
+    <div class="cp-lbl">── 救世主の証 ──</div>
+    <div class="cp-cnt">龍ちゃん<br><small style="font-size:11px;color:var(--muted)">ラーメン1杯　サービス券</small></div>
+    <hr class="cp-div">
+    <div class="cp-no-lbl">SAVIOR No.</div>
+    <div class="cp-no" id="saviorNo">----</div>
+    <hr class="cp-div">
+    <div class="cp-note">会計時にこの画面をご提示ください。<br>※一度のみ有効・他券との併用不可</div>
+  </div>
+  <div class="t-rule"></div>
+  <p style="font-size:11px;color:var(--muted);line-height:1.9;text-align:center;">あなたは横浜の救世主として記録に刻まれた。</p>
+</div>
+
+<script>
+/* ══════════════════════════════
+   ITEMS
+══════════════════════════════ */
+const ITEMS = {
+  ladle:   {icon:'🥄', name:'古いおたま',   desc:'使い込まれた木のおたま。柄に何か刻まれている……'},
+  key:     {icon:'🗝️', name:'錆びた鍵',     desc:'古い南京錠に合いそうな、小さな錆びた鍵。'},
+  cipher:  {icon:'📜', name:'暗号板',        desc:'記号と数字の対応表が刻まれた古い板。金庫の番号がわかるかも。'},
+  photo:   {icon:'🖼️', name:'古い写真',      desc:'龍ちゃんの創業当時の写真。店の前に人物が写っている。'},
+  lantern: {icon:'🏮', name:'赤い提灯',      desc:'龍の文字が入った提灯。裏に小さな文字で何か書いてある。'},
+  memo:    {icon:'📓', name:'店主の手帳',    desc:'龍ちゃんの店主が書いた手帳。金庫の隠し場所が書かれているかも。'},
+  broth:   {icon:'🍲', name:'秘伝のタレ',    desc:'龍ちゃんの秘伝のタレ。これがスープの核心だ。'},
+};
+
+/* ══════════════════════════════
+   SCENES — SVG ARTWORK
+══════════════════════════════ */
+
+function svgKitchen() {
+  return `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="ambK" cx="40%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#2a1e10" stop-opacity=".6"/>
+      <stop offset="100%" stop-color="#0a0806" stop-opacity="1"/>
+    </radialGradient>
+    <filter id="blur2"><feGaussianBlur stdDeviation="2"/></filter>
+    <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+
+  <!-- 床・壁 -->
+  <rect width="400" height="300" fill="#0d0a07"/>
+  <rect width="400" height="175" fill="#161210"/>
+  <!-- 壁タイル -->
+  <rect width="400" height="175" fill="url(#ambK)"/>
+  ${Array.from({length:11},(_,i)=>`<line x1="${i*40}" y1="0" x2="${i*40}" y2="175" stroke="#1e1a14" stroke-width=".8" opacity=".7"/>`).join('')}
+  ${Array.from({length:5},(_,i)=>`<line x1="0" y1="${i*40}" x2="400" y2="${i*40}" stroke="#1e1a14" stroke-width=".8" opacity=".7"/>`).join('')}
+  <!-- 壁と床の境 -->
+  <line x1="0" y1="175" x2="400" y2="175" stroke="#2e2010" stroke-width="2.5"/>
+  <!-- 床板 -->
+  ${Array.from({length:5},(_,i)=>`<rect x="0" y="${175+i*25}" width="400" height="24" fill="${i%2?'#0e0b07':'#100d08'}"/><line x1="0" y1="${175+i*25}" x2="400" y2="${i*25+175}" stroke="#1a1610" stroke-width=".8"/>`).join('')}
+  <!-- 床の縦板目 -->
+  ${[80,160,240,320].map(x=>`<line x1="${x}" y1="175" x2="${x}" y2="300" stroke="#1a1610" stroke-width=".8"/>`).join('')}
+
+  <!-- 天井照明 -->
+  <ellipse cx="120" cy="4" rx="40" ry="6" fill="#c8a84b" opacity=".12" filter="url(#blur2)"/>
+  <rect x="110" y="0" width="20" height="8" fill="#2a2018" rx="2"/>
+  <ellipse cx="120" cy="60" rx="70" ry="55" fill="#c8a84b" opacity=".06" filter="url(#blur2)"/>
+
+  <!-- 棚 (右上) -->
+  <rect x="248" y="28" width="144" height="10" fill="#2a2016" rx="1.5"/>
+  <rect x="248" y="38" width="144" height="85" fill="#1a1610" rx="0"/>
+  <!-- 棚板2段目 -->
+  <rect x="248" y="80" width="144" height="8" fill="#2a2016" rx="1"/>
+  <!-- 調味料ボトル -->
+  <rect x="254" y="44" width="12" height="34" fill="#3a2e1a" rx="2"/>
+  <rect x="254" y="42" width="12" height="6" fill="#2a2010" rx="1"/>
+  <rect x="270" y="44" width="12" height="28" fill="#1a2e1a" rx="2"/>
+  <rect x="270" y="42" width="12" height="6" fill="#142010" rx="1"/>
+  <rect x="286" y="44" width="10" height="32" fill="#2a1a1a" rx="2"/>
+  <rect x="302" y="44" width="14" height="36" fill="#3a3010" rx="2"/>
+  <rect x="320" y="44" width="10" height="30" fill="#1a2a2a" rx="2"/>
+  <rect x="334" y="44" width="10" height="34" fill="#2a2a1a" rx="2"/>
+  <!-- 棚の上段 調味料 -->
+  <rect x="254" y="86" width="10" height="20" fill="#3a2810" rx="1.5"/>
+  <rect x="268" y="86" width="10" height="20" fill="#2a3010" rx="1.5"/>
+  <rect x="282" y="86" width="10" height="18" fill="#1a2818" rx="1.5"/>
+  <!-- 古い写真 (棚の奥に立てかけ) -->
+  <rect x="346" y="15" width="34" height="26" fill="#1e1408" stroke="#c8a84b" stroke-width="1" rx="1"/>
+  <rect x="348" y="17" width="30" height="22" fill="#120e06"/>
+  <rect x="352" y="20" width="22" height="16" fill="#1a1208"/>
+  <circle cx="363" cy="28" r="5" fill="#2a1e10"/>
+  <line x1="348" y1="33" x2="378" y2="33" stroke="#1e1a10" stroke-width=".5"/>
+
+  <!-- コンロ台 -->
+  <rect x="20" y="155" width="200" height="22" fill="#201c12" rx="2"/>
+  <rect x="20" y="177" width="200" height="60" fill="#181610" rx="1"/>
+  <line x1="20" y1="177" x2="220" y2="177" stroke="#2a2418" stroke-width="1"/>
+  <!-- コンロ五徳 -->
+  <circle cx="85" cy="167" rx="28" ry="9" fill="none" stroke="#2a2418" stroke-width="1.5"/>
+  <circle cx="85" cy="167" rx="18" ry="6" fill="#0a0806" stroke="#1e1a12" stroke-width="1"/>
+  <!-- 炎 -->
+  <ellipse cx="73" cy="160" rx="6" ry="5" fill="#c84818" opacity=".75">
+    <animate attributeName="ry" values="5;3;6;4;5" dur=".8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values=".75;.5;.8;.6;.75" dur=".9s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="85" cy="158" rx="6" ry="7" fill="#e09020" opacity=".8">
+    <animate attributeName="ry" values="7;5;8;6;7" dur=".7s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="97" cy="160" rx="6" ry="5" fill="#c84818" opacity=".75">
+    <animate attributeName="ry" values="5;7;4;6;5" dur=".95s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="85" cy="158" rx="14" ry="12" fill="#e09020" opacity=".12" filter="url(#blur2)"/>
+
+  <!-- 寸胴鍋 -->
+  <ellipse cx="85" cy="128" rx="44" ry="12" fill="#282418"/>
+  <rect x="41" y="128" width="88" height="60" fill="#1e1c14"/>
+  <!-- 鍋の帯 -->
+  <rect x="41" y="145" width="88" height="3" fill="#2a2818"/>
+  <rect x="41" y="162" width="88" height="3" fill="#2a2818"/>
+  <ellipse cx="85" cy="188" rx="44" ry="10" fill="#16140e"/>
+  <!-- 鍋の蓋 -->
+  <ellipse cx="85" cy="126" rx="46" ry="13" fill="#2a2618"/>
+  <ellipse cx="85" cy="124" rx="44" ry="11" fill="#222018"/>
+  <ellipse cx="85" cy="121" rx="10" ry="5" fill="#302c1e" rx="3"/>
+  <!-- 蒸気 -->
+  <path d="M62,118 Q54,98 62,78" stroke="#c8c0a0" stroke-width="2" fill="none" opacity=".25" stroke-linecap="round">
+    <animate attributeName="opacity" values=".25;.08;.28;.1;.25" dur="2.2s" repeatCount="indefinite"/>
+    <animate attributeName="d" values="M62,118 Q54,98 62,78;M62,118 Q70,98 62,78;M62,118 Q54,98 62,78" dur="2.2s" repeatCount="indefinite"/>
+  </path>
+  <path d="M85,115 Q76,92 85,70" stroke="#c8c0a0" stroke-width="2.5" fill="none" opacity=".3" stroke-linecap="round">
+    <animate attributeName="opacity" values=".3;.6;.25;.5;.3" dur="1.8s" repeatCount="indefinite"/>
+    <animate attributeName="d" values="M85,115 Q76,92 85,70;M85,115 Q94,92 85,70;M85,115 Q76,92 85,70" dur="1.8s" repeatCount="indefinite"/>
+  </path>
+  <path d="M108,118 Q116,98 108,78" stroke="#c8c0a0" stroke-width="2" fill="none" opacity=".25" stroke-linecap="round">
+    <animate attributeName="opacity" values=".25;.1;.3;.08;.25" dur="2.5s" repeatCount="indefinite"/>
+  </path>
+
+  <!-- おたま (鍋に立てかけ) -->
+  <line x1="128" y1="185" x2="115" y2="128" stroke="#3a3220" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="112" cy="122" r="10" fill="#2e2a18" stroke="#3a3620" stroke-width="1.5"/>
+
+  <!-- ロッカー (左壁) -->
+  <rect x="5" y="155" width="18" height="10" fill="#201c12" rx="1"/> <!-- ロッカー上部台 -->
+  <rect x="0" y="165" width="28" height="115" fill="#1c1810" stroke="#282010" stroke-width="1.5" rx="2"/>
+  <line x1="14" y1="165" x2="14" y2="280" stroke="#242018" stroke-width="1"/>
+  <!-- ロッカーの錠前 -->
+  <rect x="8" y="216" width="12" height="10" fill="#141210" stroke="#c8a84b" stroke-width="1" rx="1"/>
+  <path d="M11,216 Q14,210 17,216" stroke="#c8a84b" stroke-width="1.5" fill="none"/>
+
+  <!-- 作業台 -->
+  <rect x="220" y="165" width="180" height="15" fill="#262018" rx="2"/>
+  <rect x="220" y="180" width="180" height="60" fill="#1c1a10"/>
+  <!-- 作業台上のもの -->
+  <rect x="230" y="145" width="30" height="20" fill="#1a1610" stroke="#2a2418" stroke-width="1" rx="2"/>
+  <rect x="268" y="148" width="20" height="17" fill="#1a1e10" stroke="#2a2c18" stroke-width="1" rx="2"/>
+  <rect x="296" y="150" width="16" height="15" fill="#201a10" stroke="#302818" stroke-width="1" rx="2"/>
+
+  <!-- 壁のフック -->
+  <line x1="355" y1="130" x2="355" y2="155" stroke="#3a3020" stroke-width="3" stroke-linecap="round"/>
+  <path d="M348,132 Q355,122 362,132" stroke="#c8a84b" stroke-width="2" fill="none"/>
+  <!-- 鍵 (床に落ちてる) -->
+  <circle cx="318" cy="178" r="5" fill="none" stroke="#8a7028" stroke-width="2"/>
+  <line x1="323" y1="178" x2="334" y2="185" stroke="#8a7028" stroke-width="2" stroke-linecap="round"/>
+  <line x1="330" y1="183" x2="330" y2="188" stroke="#8a7028" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="333" y1="185" x2="333" y2="190" stroke="#8a7028" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- 奥の扉 -->
+  <rect x="158" y="195" width="64" height="75" fill="#14100a" stroke="#241c10" stroke-width="2" rx="2"/>
+  <line x1="190" y1="195" x2="190" y2="270" stroke="#201810" stroke-width="1"/>
+  <circle cx="210" cy="232" r="4" fill="#c8a84b" opacity=".8"/>
+  <rect x="162" y="199" width="56" height="4" fill="#1c1810" rx="1"/>
+  <text x="190" y="190" text-anchor="middle" fill="#3a3020" font-size="8" font-family="sans-serif" letter-spacing="1">店内へ</text>
+
+  <!-- 全体オーバーレイ（雰囲気） -->
+  <rect width="400" height="300" fill="rgba(0,0,0,.18)"/>
+</svg>`;
+}
+
+function svgHall() {
+  return `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="lanternGlow" cx="50%" cy="46%" r="40%">
+      <stop offset="0%" stop-color="#8a2010" stop-opacity=".35"/>
+      <stop offset="100%" stop-color="#0d0906" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur5"><feGaussianBlur stdDeviation="5"/></filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="400" height="300" fill="#0d0a07"/>
+  <rect width="400" height="175" fill="#161210"/>
+  <!-- 天井 -->
+  <rect width="400" height="30" fill="#120f0a"/>
+
+  <!-- 床 -->
+  ${Array.from({length:5},(_,i)=>`<rect x="0" y="${175+i*25}" width="400" height="24" fill="${i%2?'#0e0b07':'#100d08'}"/>`).join('')}
+  ${[80,160,240,320].map(x=>`<line x1="${x}" y1="175" x2="${x}" y2="300" stroke="#1a1610" stroke-width=".8"/>`).join('')}
+  <line x1="0" y1="175" x2="400" y2="175" stroke="#2a1c10" stroke-width="2"/>
+
+  <!-- 壁板 -->
+  ${Array.from({length:7},(_,i)=>`<rect x="${i*60}" y="30" width="58" height="145" fill="${i%2?'#161210':'#141010'}" rx="0"/><line x1="${i*60}" y1="30" x2="${i*60}" y2="175" stroke="#1e1a12" stroke-width="1"/>`).join('')}
+  <line x1="0" y1="30" x2="400" y2="30" stroke="#1e1a12" stroke-width="1"/>
+
+  <!-- 龍の絵 (左壁) -->
+  <rect x="10" y="38" width="110" height="120" fill="#12100e" stroke="#2a2010" stroke-width="2" rx="2"/>
+  <rect x="14" y="42" width="102" height="112" fill="#0e0b08"/>
+  <!-- 龍の絵の内容 -->
+  <path d="M22,135 C35,110 42,90 52,72 C62,54 75,48 85,52 C95,56 100,68 95,80 C90,92 78,90 82,104 C86,118 98,114 108,128"
+        stroke="#c8a84b" stroke-width="2.5" fill="none" opacity=".55" stroke-linecap="round"/>
+  <path d="M52,72 C48,62 54,54 62,56" stroke="#c8a84b" stroke-width="1.5" fill="none" opacity=".4"/>
+  <circle cx="55" cy="70" r="5" fill="none" stroke="#c8a84b" stroke-width="1.2" opacity=".5"/>
+  <!-- 龍の目 (光る) -->
+  <circle cx="54" cy="69" r="2.5" fill="#c8a84b" opacity=".9" filter="url(#blur3)">
+    <animate attributeName="opacity" values=".9;.3;1;.4;.9" dur="2.4s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="54" cy="69" r="1.2" fill="#e8d080">
+    <animate attributeName="opacity" values="1;.2;1;.3;1" dur="2.4s" repeatCount="indefinite"/>
+  </circle>
+  <!-- 龍の絵の装飾枠 -->
+  <rect x="14" y="42" width="102" height="112" fill="none" stroke="#2a2010" stroke-width="1"/>
+  <line x1="16" y1="44" x2="114" y2="44" stroke="#3a2c14" stroke-width=".5"/>
+  <line x1="16" y1="152" x2="114" y2="152" stroke="#3a2c14" stroke-width=".5"/>
+
+  <!-- カウンター -->
+  <rect x="70" y="148" width="260" height="18" fill="#2e2618" rx="2"/>
+  <rect x="70" y="166" width="260" height="90" fill="#1e1a12"/>
+  <rect x="70" y="164" width="260" height="4" fill="#3a3020"/>
+  <!-- カウンターの木目 -->
+  <line x1="70" y1="172" x2="330" y2="172" stroke="#282010" stroke-width=".8"/>
+  <line x1="70" y1="180" x2="330" y2="180" stroke="#242010" stroke-width=".6" stroke-dasharray="3,8"/>
+
+  <!-- 提灯 (カウンター上) -->
+  <line x1="196" y1="30" x2="196" y2="55" stroke="#3a3020" stroke-width="2"/>
+  <ellipse cx="196" cy="100" rx="20" ry="26" fill="url(#lanternGlow)" filter="url(#blur5)"/>
+  <ellipse cx="196" cy="100" rx="18" ry="24" fill="#8a1010" stroke="#c8a84b" stroke-width="1.2"/>
+  <ellipse cx="196" cy="100" rx="15" ry="20" fill="#7a0e0e"/>
+  <!-- 提灯の帯 -->
+  <line x1="180" y1="88" x2="212" y2="88" stroke="#c8a84b" stroke-width=".8" opacity=".5"/>
+  <line x1="180" y1="112" x2="212" y2="112" stroke="#c8a84b" stroke-width=".8" opacity=".5"/>
+  <text x="196" y="105" text-anchor="middle" fill="#c8a84b" font-size="14" font-weight="bold" font-family="serif">龍</text>
+  <rect x="192" y="56" width="8" height="8" fill="#c8a84b" rx="1"/>
+  <!-- 提灯の光の暈 -->
+  <ellipse cx="196" cy="100" rx="35" ry="40" fill="#8a1010" opacity=".08">
+    <animate attributeName="opacity" values=".08;.18;.08" dur="2.8s" repeatCount="indefinite"/>
+  </ellipse>
+
+  <!-- 壁の提灯 (右) -->
+  <line x1="350" y1="30" x2="350" y2="50" stroke="#3a3020" stroke-width="1.5"/>
+  <ellipse cx="350" cy="72" rx="13" ry="17" fill="#7a0e0e" stroke="#c8a84b" stroke-width="1"/>
+  <text x="350" y="76" text-anchor="middle" fill="#c8a84b" font-size="10" font-weight="bold" font-family="serif">龍</text>
+
+  <!-- のれん -->
+  ${[78,103,128,153,178,203,228,253,278,303].filter((_,i)=>i<7).map(x=>`
+    <rect x="${x}" y="30" width="22" height="56" fill="#7a0e0e" rx="1"/>
+    <rect x="${x+2}" y="30" width="18" height="56" fill="#6e0c0c" rx="1"/>
+    <line x1="${x+2}" y1="48" x2="${x+20}" y2="48" stroke="#8a1010" stroke-width=".5"/>
+    <text x="${x+11}" y="64" text-anchor="middle" fill="#c8a84b" font-size="9" font-weight="bold" font-family="serif">龍</text>
+  `).join('')}
+
+  <!-- 金庫 (右下カウンター内) -->
+  <rect x="308" y="185" width="70" height="62" fill="#161410" stroke="#2a2018" stroke-width="1.5" rx="3"/>
+  <rect x="312" y="189" width="62" height="54" fill="#121008"/>
+  <circle cx="343" cy="216" r="16" fill="#0e0c08" stroke="#2a2018" stroke-width="2"/>
+  <circle cx="343" cy="216" r="8" fill="#141210" stroke="#c8a84b" stroke-width="1"/>
+  <!-- ダイヤルの目盛り -->
+  ${Array.from({length:8},(_,i)=>{
+    const a=i*45*Math.PI/180, r=13;
+    const x=343+r*Math.cos(a), y=216+r*Math.sin(a);
+    return `<line x1="${343+10*Math.cos(a)}" y1="${216+10*Math.sin(a)}" x2="${x}" y2="${y}" stroke="#2a2818" stroke-width="1"/>`;
+  }).join('')}
+
+  <!-- 手帳 (カウンター上) -->
+  <rect x="88" y="140" width="34" height="8" fill="#1a1408" stroke="#c8a84b" stroke-width=".8" rx="1"/>
+  <line x1="92" y1="140" x2="92" y2="148" stroke="#c8a84b" stroke-width=".5"/>
+
+  <!-- 奥の扉 -->
+  <rect x="158" y="200" width="64" height="70" fill="#14100a" stroke="#241c10" stroke-width="2" rx="2"/>
+  <circle cx="214" cy="236" r="4" fill="#c8a84b" opacity=".8"/>
+  <text x="190" y="195" text-anchor="middle" fill="#3a3020" font-size="8" font-family="sans-serif" letter-spacing="1">← 厨房へ</text>
+
+  <!-- 卓上の丼 (装飾) -->
+  <ellipse cx="260" cy="150" rx="20" ry="6" fill="#1e1a12" stroke="#2a2418" stroke-width="1"/>
+  <ellipse cx="260" cy="148" rx="18" ry="5" fill="#181610"/>
+  <ellipse cx="260" cy="146" rx="13" ry="3.5" fill="#2a1e10" opacity=".8"/>
+
+  <!-- 全体オーバーレイ -->
+  <rect width="400" height="300" fill="rgba(0,0,0,.15)"/>
+</svg>`;
+}
+
+function svgOutside() {
+  return `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="skyGrad" cx="50%" cy="0%" r="80%">
+      <stop offset="0%" stop-color="#14101c"/>
+      <stop offset="100%" stop-color="#080608"/>
+    </radialGradient>
+    <radialGradient id="signGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#aa2010" stop-opacity=".4"/>
+      <stop offset="100%" stop-color="#0a0608" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur4"><feGaussianBlur stdDeviation="4"/></filter>
+    <filter id="blur6"><feGaussianBlur stdDeviation="6"/></filter>
+  </defs>
+
+  <!-- 夜空 -->
+  <rect width="400" height="300" fill="url(#skyGrad)"/>
+
+  <!-- 星 -->
+  ${Array.from({length:32},(_,i)=>{
+    const x=(Math.sin(i*137.508)*190+200)|0;
+    const y=(Math.abs(Math.cos(i*97.3))*120+8)|0;
+    const s=.4+.55*(i%5)/5;
+    return `<circle cx="${x}" cy="${y}" r="${.8+.6*(i%3)*.5}" fill="#c8d0e0" opacity="${s}"/>`;
+  }).join('')}
+
+  <!-- 月 -->
+  <circle cx="340" cy="35" r="18" fill="#e8d880" opacity=".85"/>
+  <circle cx="348" cy="28" r="16" fill="#14101c"/>
+
+  <!-- 地面・道路 -->
+  <rect x="0" y="230" width="400" height="70" fill="#0e0c08"/>
+  <line x1="0" y1="230" x2="400" y2="230" stroke="#1e1a10" stroke-width="2"/>
+  <!-- 水たまり反射 -->
+  <ellipse cx="80" cy="250" rx="50" ry="8" fill="#1a1614" opacity=".6"/>
+  <ellipse cx="320" cy="260" rx="35" ry="6" fill="#1a1614" opacity=".5"/>
+  <!-- 道路の白線 -->
+  ${Array.from({length:5},(_,i)=>`<rect x="${60+i*70}" y="268" width="30" height="5" fill="#2a2820" rx="1"/>`).join('')}
+
+  <!-- 建物左側 -->
+  <rect x="0" y="80" width="65" height="180" fill="#0e0c08"/>
+  <rect x="0" y="80" width="65" height="6" fill="#181410"/>
+  <!-- 窓 -->
+  <rect x="8" y="96" width="22" height="30" fill="#0a0808" stroke="#1e1a10" stroke-width="1" rx="1"/>
+  <rect x="36" y="96" width="22" height="30" fill="#14100a" stroke="#1e1a10" stroke-width="1" rx="1"/>
+
+  <!-- 建物右側 -->
+  <rect x="335" y="80" width="65" height="180" fill="#0e0c08"/>
+  <rect x="335" y="80" width="65" height="6" fill="#181410"/>
+
+  <!-- メイン店舗 -->
+  <rect x="62" y="65" width="276" height="195" fill="#161210" stroke="#2a1e10" stroke-width="2"/>
+
+  <!-- 屋根 -->
+  <rect x="55" y="58" width="290" height="14" fill="#1e1a10" rx="2"/>
+  <path d="M55,58 L70,42 L330,42 L345,58 Z" fill="#18140e"/>
+  <path d="M70,42 L200,32 L330,42" fill="#1c1810"/>
+  <!-- 屋根装飾 -->
+  <line x1="55" y1="58" x2="345" y2="58" stroke="#c8a84b" stroke-width=".8" opacity=".3"/>
+
+  <!-- 看板の光 (背後) -->
+  <rect x="80" y="40" width="240" height="58" fill="url(#signGlow)" filter="url(#blur6)"/>
+
+  <!-- 看板 -->
+  <rect x="88" y="42" width="224" height="56" fill="#1a0808" stroke="#c8a84b" stroke-width="2" rx="3"/>
+  <rect x="92" y="46" width="216" height="48" fill="#130606" rx="1"/>
+  <!-- 看板内装飾 -->
+  <line x1="92" y1="62" x2="308" y2="62" stroke="#3a1c10" stroke-width=".8"/>
+  <line x1="92" y1="82" x2="308" y2="82" stroke="#3a1c10" stroke-width=".8"/>
+  <text x="200" y="79" text-anchor="middle" fill="#c8a84b" font-family="serif" font-size="22" font-weight="bold" letter-spacing="10">龍ちゃん</text>
+  <!-- 看板の龍装飾 -->
+  <path d="M96,50 C104,44 116,48 110,56 C104,64 96,59 101,67" stroke="#c8a84b" stroke-width="1.5" fill="none" opacity=".45" stroke-linecap="round"/>
+  <path d="M304,50 C296,44 284,48 290,56 C296,64 304,59 299,67" stroke="#c8a84b" stroke-width="1.5" fill="none" opacity=".45" stroke-linecap="round"/>
+  <!-- 龍の文字装飾 -->
+  <text x="100" y="58" fill="#c8a84b" font-size="9" font-family="serif" opacity=".4">龍</text>
+  <text x="292" y="58" fill="#c8a84b" font-size="9" font-family="serif" opacity=".4">龍</text>
+
+  <!-- のれん -->
+  ${[88,114,140,166,192,218,244,270].map((x,i)=>`
+    <rect x="${x}" y="102" width="22" height="62" fill="#7a0e0e" rx="1"/>
+    <rect x="${x+2}" y="102" width="18" height="62" fill="${i%2?'#700c0c':'#6e0a0a'}" rx="1"/>
+    <line x1="${x}" y1="118" x2="${x+22}" y2="118" stroke="#8a1010" stroke-width=".6"/>
+    <line x1="${x}" y1="136" x2="${x+22}" y2="136" stroke="#8a1010" stroke-width=".6"/>
+    <text x="${x+11}" y="130" text-anchor="middle" fill="#c8a84b" font-size="9" font-weight="bold" font-family="serif">龍</text>
+  `).join('')}
+
+  <!-- 提灯 (左) -->
+  <line x1="110" y1="65" x2="110" y2="102" stroke="#3a3020" stroke-width="1.5"/>
+  <ellipse cx="110" cy="118" rx="12" ry="16" fill="#8a1010" stroke="#c8a84b" stroke-width="1"/>
+  <ellipse cx="110" cy="118" rx="9" ry="13" fill="#7a0e0e"/>
+  <text x="110" y="122" text-anchor="middle" fill="#c8a84b" font-size="9" font-weight="bold" font-family="serif">龍</text>
+  <ellipse cx="110" cy="118" rx="22" ry="24" fill="#8a1010" opacity=".1">
+    <animate attributeName="opacity" values=".1;.22;.1" dur="2.4s" repeatCount="indefinite"/>
+  </ellipse>
+
+  <!-- 提灯 (右) -->
+  <line x1="290" y1="65" x2="290" y2="102" stroke="#3a3020" stroke-width="1.5"/>
+  <ellipse cx="290" cy="118" rx="12" ry="16" fill="#8a1010" stroke="#c8a84b" stroke-width="1"/>
+  <ellipse cx="290" cy="118" rx="9" ry="13" fill="#7a0e0e"/>
+  <text x="290" y="122" text-anchor="middle" fill="#c8a84b" font-size="9" font-weight="bold" font-family="serif">龍</text>
+  <ellipse cx="290" cy="118" rx="22" ry="24" fill="#8a1010" opacity=".1">
+    <animate attributeName="opacity" values=".1;.22;.1" dur="2.7s" repeatCount="indefinite"/>
+  </ellipse>
+
+  <!-- 入口ドア -->
+  <rect x="150" y="168" width="100" height="82" fill="#100c08" stroke="#1e1810" stroke-width="2" rx="2"/>
+  <line x1="200" y1="168" x2="200" y2="250" stroke="#1a1610" stroke-width="1"/>
+  <rect x="154" y="172" width="90" height="6" fill="#181410" rx="1"/>
+  <circle cx="234" cy="210" r="4" fill="#c8a84b" opacity=".85"/>
+  <!-- ドアの窓 -->
+  <rect x="157" y="182" width="38" height="30" fill="#0e0a06" stroke="#1e1810" stroke-width="1" rx="1"/>
+  <rect x="205" y="182" width="38" height="30" fill="#0e0a06" stroke="#1e1810" stroke-width="1" rx="1"/>
+
+  <!-- 外灯 -->
+  <line x1="67" y1="95" x2="67" y2="230" stroke="#1e1810" stroke-width="3"/>
+  <rect x="60" y="88" width="14" height="12" fill="#c8a84b" rx="1" opacity=".7"/>
+  <ellipse cx="67" cy="110" rx="25" ry="30" fill="#c8a84b" opacity=".06" filter="url(#blur4)"/>
+
+  <!-- 地面反射 -->
+  <ellipse cx="110" cy="235" rx="28" ry="5" fill="#8a1010" opacity=".12"/>
+  <ellipse cx="290" cy="235" rx="28" ry="5" fill="#8a1010" opacity=".12"/>
+
+  <!-- 全体オーバーレイ -->
+  <rect width="400" height="300" fill="rgba(0,0,0,.12)"/>
+</svg>`;
+}
+
+/* ══════════════════════════════
+   SCENE DATA
+══════════════════════════════ */
+const SCENE_DATA = {
+  kitchen: {
+    name: '龍ちゃん・厨房',
+    svg: svgKitchen,
+    hotspots: [
+      { id:'hs-pot',    cx:22, cy:62, r:28,
+        examSvg: `<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
+          <rect width="240" height="160" fill="#0e0b08"/>
+          <ellipse cx="120" cy="55" rx="55" ry="14" fill="#282418"/>
+          <rect x="65" y="55" width="110" height="72" fill="#1e1c14"/>
+          <ellipse cx="120" cy="127" rx="55" ry="12" fill="#16140e"/>
+          <ellipse cx="120" cy="53" rx="57" ry="16" fill="#2a2618"/>
+          <ellipse cx="120" cy="50" rx="55" ry="14" fill="#222018"/>
+          <path d="M100,42 Q95,28 100,14" stroke="#c8c0a0" stroke-width="2" fill="none" opacity=".3"><animate attributeName="opacity" values=".3;.6;.2;.5;.3" dur="2s" repeatCount="indefinite"/></path>
+          <path d="M120,38 Q113,22 120,6" stroke="#c8c0a0" stroke-width="2.5" fill="none" opacity=".35"><animate attributeName="opacity" values=".35;.1;.4;.15;.35" dur="1.8s" repeatCount="indefinite"/></path>
+          <path d="M140,42 Q147,28 140,14" stroke="#c8c0a0" stroke-width="2" fill="none" opacity=".3"><animate attributeName="opacity" values=".3;.55;.2;.45;.3" dur="2.3s" repeatCount="indefinite"/></path>
+          <line x1="168" y1="126" x2="155" y2="58" stroke="#3a3220" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="152" cy="52" r="13" fill="#2e2a18" stroke="#3a3620" stroke-width="2"/>
+          <text x="120" y="150" text-anchor="middle" fill="#7a7060" font-size="9" font-family="sans-serif">柄に何か刻まれている……</text>
+        </svg>`,
+        examDesc: '使い込まれた年季の入る寸胴鍋。鍋のそばに<strong>古いおたま</strong>が立てかけてある。長年の煤で黒ずんでいるが、柄に何か文字が刻まれているようだ。',
+        give: 'ladle',
+        giveDesc: '柄に「龍 創業元年」と刻まれた古いおたまを手に取った。',
+      },
+      { id:'hs-shelf',  cx:79, cy:30, r:22,
+        examSvg: `<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
+          <rect width="240" height="160" fill="#0e0b08"/>
+          <rect x="10" y="15" width="220" height="10" fill="#2a2016" rx="1.5"/>
+          <rect x="14" y="25" width="24" height="42" fill="#3a2e1a" rx="2"/>
+          <rect x="42" y="25" width="24" height="36" fill="#1a2e1a" rx="2"/>
+          <rect x="70" y="25" width="20" height="40" fill="#2a1a1a" rx="2"/>
+          <rect x="94" y="25" width="24" height="44" fill="#3a3010" rx="2"/>
+          <rect x="122" y="25" width="20" height="38" fill="#1a2a2a" rx="2"/>
+          <rect x="146" y="25" width="20" height="42" fill="#2a2a1a" rx="2"/>
+          <rect x="176" y="5" width="48" height="34" fill="#1e1408" stroke="#c8a84b" stroke-width="1.5" rx="2"/>
+          <rect x="180" y="9" width="40" height="26" fill="#130e06"/>
+          <rect x="184" y="12" width="32" height="20" fill="#1a1208"/>
+          <circle cx="200" cy="22" r="7" fill="#2a1e10"/>
+          <text x="120" y="152" text-anchor="middle" fill="#7a7060" font-size="9" font-family="sans-serif">奥に何か挟まっている……</text>
+        </svg>`,
+        examDesc: '調味料が所狭しと並ぶ古い棚。奥に<strong>色褪せた古い写真</strong>が挟まっている。手を伸ばせば取れそうだ。',
+        give: 'photo',
+        giveDesc: '龍ちゃんの創業当時と思われる古い写真。店主らしき人物が写っている。',
+      },
+      { id:'hs-key',    cx:82, cy:61, r:18,
+        examSvg: `<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
+          <rect width="240" height="160" fill="#0e0b08"/>
+          <line x1="120" y1="20" x2="120" y2="60" stroke="#3a3020" stroke-width="4" stroke-linecap="round"/>
+          <path d="M108,24 Q120,10 132,24" stroke="#c8a84b" stroke-width="2.5" fill="none"/>
+          <circle cx="96" cy="110" r="18" fill="none" stroke="#8a7028" stroke-width="3"/>
+          <circle cx="96" cy="110" r="8" fill="none" stroke="#8a6020" stroke-width="2"/>
+          <line x1="114" y1="110" x2="152" y2="120" stroke="#8a7028" stroke-width="3" stroke-linecap="round"/>
+          <line x1="143" y1="117" x2="143" y2="130" stroke="#8a7028" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="152" y1="120" x2="152" y2="133" stroke="#8a7028" stroke-width="2.5" stroke-linecap="round"/>
+          <text x="120" y="152" text-anchor="middle" fill="#7a7060" font-size="9" font-family="sans-serif">床に落ちていた錆びた鍵</text>
+        </svg>`,
+        examDesc: '壁のフックの付近、床に<strong>錆びた古い鍵</strong>が落ちている。小さな南京錠に合いそうなサイズだ。',
+        give: 'key',
+        giveDesc: '錆びているが、まだ使えそうな小さな鍵。',
+      },
+      { id:'hs-locker', cx:6, cy:72, r:18,
+        examSvg: `<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
+          <rect width="240" height="160" fill="#0e0b08"/>
+          <rect x="60" y="10" width="120" height="140" fill="#1c1810" stroke="#282010" stroke-width="2" rx="3"/>
+          <line x1="120" y1="10" x2="120" y2="150" stroke="#242018" stroke-width="1"/>
+          <rect x="82" y="75" width="30" height="22" fill="#141210" stroke="#c8a84b" stroke-width="1.5" rx="2"/>
+          <path d="M88,75 Q97,62 106,75" stroke="#c8a84b" stroke-width="2" fill="none"/>
+          <circle cx="97" cy="86" r="4" fill="none" stroke="#c8a84b" stroke-width="1.5"/>
+          <text x="120" y="152" text-anchor="middle" fill="#7a7060" font-size="9" font-family="sans-serif">錆びた鍵で開けられそう</text>
+        </svg>`,
+        examDesc: '古い金属製のロッカー。南京錠が掛かっている。<strong>錆びた鍵</strong>で開けられそうだ……',
+        needItem: 'key',
+        successMsg: 'ロッカーが開いた！中に<span class="hi">暗号板</span>と<span class="hi">古い写真</span>が隠されていた。',
+        give: 'cipher',
+        giveDesc: '記号と数字の対応表が刻まれた暗号板。金庫の番号解読に使えそうだ。',
+      },
+    ],
+    exits: [{label:'店内へ →', target:'hall'}],
+  },
+
+  hall: {
+    name: '龍ちゃん・店内',
+    svg: svgHall,
+    hotspots: [
+      { id:'hs-lantern', cx:50, cy:52, r:24,
+        examSvg: `<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
+          <rect width="240" height="160" fill="#0e0b08"/>
+          <line x1="120" y1="10" x2="120" y2="35" stroke="#3a3020" stroke-width="2"/>
+          <rect x="114" y="28" width="12" height="10" fill="#c8a84b" rx="2"/>
+          <ellipse cx="120" cy="88" rx="32" ry="42" fill="#7a0e0e" stroke="#c8a84b" stroke-width="1.5"/>
+          <ellipse cx="120" cy="88" rx="26" ry="36" fill="#6e0c0c"/>
+          <line x1="90" y1="72" x2="150" y2="72" stroke="#c8a84b" stroke-width="1" opacity=".5"/>
+          <line x1="90" y1="104" x2="150" y2="104" stroke="#c8a84b" stroke-width="1" opacity=".5"/>
+          <text x="120" y="94" text-anchor="middle" fill="#c8a84b" font-size="20" font-weight="bold" font-family="serif">龍</text>
+          <text x="120" y="148" text-anchor="middle" fill="#c8a84b" font-size="9" font-family="sans-serif">裏に文字が……</text>
+        </svg>`,
+        examDesc: '「龍」の文字が入った赤い提灯。裏側を見ると小さな文字で<strong>「金庫は壁の向こうに」</strong>と書かれている。',
+        give: 'lantern',
+        giveDesc: '龍の文字が入った古い提灯。裏に手がかりが書かれていた。',
+      },
+      { id:'hs-wall',    cx:16, cy:40, r:22,
+        examSvg: `<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
+          <rect width="240" height="160" fill="#0e0b08"/>
+          <rect x="20" y="10" width="200" height="130" fill="#12100e" stroke="#2a2010" stroke-width="2" rx="2"/>
+          <rect x="26" y="16" width="188" height="118" fill="#0e0b08"/>
+          <path d="M35,120 C55,90 65,70 82,55 C99,40 115,38 125,44 C135,50 138,64 132,78 C126,92 112,88 117,104 C122,120 136,115 148,126" stroke="#c8a84b" stroke-width="3" fill="none" opacity=".6" stroke-linecap="round"/>
+          <circle cx="82" cy="55" r="8" fill="none" stroke="#c8a84b" stroke-width="2" opacity=".7"/>
+          <circle cx="80" cy="54" r="3.5" fill="#e8d060" opacity=".9"><animate attributeName="opacity" values=".9;.3;1;.4;.9" dur="2s" repeatCount="indefinite"/></circle>
+          <text x="120" y="152" text-anchor="middle" fill="#c8a84b" font-size="9" font-family="sans-serif">絵の裏に……</text>
+        </svg>`,
+        examDesc: '龍の絵が描かれた古い額縁。龍の目が怪しく光っている。額縁をめくると<strong>店主の手帳</strong>が隠されていた！',
+        give: 'memo',
+        giveDesc: '店主の手帳。中に金庫の暗号解読のヒントが記されている。',
+      },
+      { id:'hs-safe',    cx:84, cy:74, r:20,
+        examSvg: `<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
+          <rect width="240" height="160" fill="#0e0b08"/>
+          <rect x="50" y="20" width="140" height="120" fill="#161410" stroke="#2a2018" stroke-width="2" rx="4"/>
+          <rect x="56" y="26" width="128" height="108" fill="#121008"/>
+          <circle cx="120" cy="90" r="32" fill="#0e0c08" stroke="#2a2018" stroke-width="3"/>
+          <circle cx="120" cy="90" r="18" fill="#141210" stroke="#c8a84b" stroke-width="1.5"/>
+          ${Array.from({length:8},(_,i)=>{const a=i*45*Math.PI/180,r=28;return `<line x1="${120+22*Math.cos(a)}" y1="${90+22*Math.sin(a)}" x2="${120+r*Math.cos(a)}" y2="${90+r*Math.sin(a)}" stroke="#2a2818" stroke-width="1.5"/>`;}).join('')}
+          <text x="120" y="152" text-anchor="middle" fill="#7a7060" font-size="9" font-family="sans-serif">暗号板と手帳を組み合わせて</text>
+        </svg>`,
+        examDesc: '暗証番号式の重厚な金庫。<strong>暗号板</strong>と<strong>店主の手帳</strong>を組み合わせれば番号がわかるかもしれない……',
+        needItem: 'broth',
+        needItemMsg: '<span class="warn">暗号板と店主の手帳を組み合わせて、番号を解読しよう。</span>',
+        successMsg: '金庫が開いた！中に<span class="hi">秘伝のタレ</span>が……！スープを取り戻した！',
+        give: 'broth',
+        giveDesc: '龍ちゃん秘伝のタレ。これがあのスープの核心だ。',
+        isFinalItem: true,
+      },
+    ],
+    exits: [
+      {label:'← 厨房へ', target:'kitchen'},
+      {label:'店の外へ →', target:'outside', needItem:'broth', needMsg:'まだ謎が残っている。'},
+    ],
+  },
+
+  outside: {
+    name: '店の入口・外観',
+    svg: svgOutside,
+    hotspots: [
+      { id:'hs-sign', cx:50, cy:26, r:28,
+        isFinalRiddle: true,
+        examSvg: `<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
+          <rect width="240" height="160" fill="#0e0b08"/>
+          <rect x="14" y="20" width="212" height="84" fill="#1a0808" stroke="#c8a84b" stroke-width="2" rx="3"/>
+          <rect x="18" y="24" width="204" height="76" fill="#130606" rx="1"/>
+          <text x="120" y="72" text-anchor="middle" fill="#c8a84b" font-family="serif" font-size="24" font-weight="bold" letter-spacing="10">龍ちゃん</text>
+          <path d="M22,30 C32,22 46,27 38,38 C30,49 22,43 28,52" stroke="#c8a84b" stroke-width="2" fill="none" opacity=".6" stroke-linecap="round"/>
+          <circle cx="30" cy="28" r="4" fill="none" stroke="#c8a84b" stroke-width="1.5" opacity=".7"/>
+          <text x="120" y="130" text-anchor="middle" fill="#c8a84b" font-size="11" font-family="sans-serif">龍の向きをよく見よ</text>
+          <text x="120" y="150" text-anchor="middle" fill="#7a7060" font-size="9" font-family="sans-serif">右・左、どちらを向いている？</text>
+        </svg>`,
+        examDesc: '「龍ちゃん」の看板に描かれた龍の絵。<strong>最後の封印</strong>がここに隠されている。龍の頭はどちらを向いているか——直接、店の外観を見て確かめよ。',
+      },
+    ],
+    exits: [],
+  },
+};
+
+/* ══════════════════════════════
+   STATE
+══════════════════════════════ */
+let inventory = [];
+let collected = {};
+let combSlots = [null, null];
+let pendingAns = null;
+let pendingExam = null;
+let currentScene = 'kitchen';
+let progress = 0;
+const PROG_MAX = 6;
+
+/* ══════════════════════════════
+   GAME START
+══════════════════════════════ */
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function startGame() {
+  go('s-game');
+  loadScene('kitchen');
+  renderDots();
+}
+
+/* ══════════════════════════════
+   SCENE LOADING
+══════════════════════════════ */
+function loadScene(key) {
+  currentScene = key;
+  const data = SCENE_DATA[key];
+  document.getElementById('gName').textContent = data.name;
+
+  const wrap = document.getElementById('sceneWrap');
+  wrap.innerHTML = data.svg();
+
+  // hotspots
+  data.hotspots.forEach(hs => {
+    if (collected[hs.id] && !hs.needItem && !hs.isFinalRiddle && !hs.isFinalItem) return;
+    const div = document.createElement('div');
+    div.className = 'hs' + (collected[hs.id] ? ' collected' : '');
+    div.id = 'hsdiv-' + hs.id;
+    div.style.cssText = `left:${hs.cx}%;top:${hs.cy}%;width:${hs.r * 2}px;height:${hs.r * 2}px;`;
+    div.innerHTML = `<div class="hs-ring"></div>`;
+    div.addEventListener('click', () => onHotspot(hs));
+    wrap.appendChild(div);
+  });
+
+  setMsg('光っている場所をタップして調べよう。');
+}
+
+/* ══════════════════════════════
+   HOTSPOT
+══════════════════════════════ */
+function onHotspot(hs) {
+  if (hs.isFinalRiddle) {
+    // まずexamineを見せてから謎解きへ
+    openExamine(hs, () => {
+      openInput(
+        `看板に刻まれた<strong>龍の絵</strong>をよく見よ。<br><br>龍の頭はどちらの方向を向いているか？<br><br><strong>右なら「みぎ」<br>左なら「ひだり」</strong>と入力せよ。`,
+        ['みぎ', '右', 'ミギ', '右向き'],
+        () => { progress++; renderDots(); sealBreak(() => showClear()); }
+      );
+    });
+    return;
+  }
+
+  if (hs.needItem) {
+    if (!inventory.includes(hs.needItem)) {
+      setMsg(hs.needItemMsg || `<span class="warn">まだ開けられない……必要なアイテムが足りないようだ。</span>`);
+      return;
+    }
+    if (collected[hs.id]) { setMsg('すでに調べた場所だ。'); return; }
+    collected[hs.id] = true;
+    removeHsRing(hs.id);
+    setMsg(hs.successMsg || 'うまくいった！');
+    if (hs.give) showItemGet(hs.give, hs.giveDesc || '', () => {
+      giveItem(hs.give);
+      progress++;
+      renderDots();
+      if (hs.isFinalItem) {
+        setTimeout(() => {
+          setMsg('秘伝のタレを手に入れた！しかし……<span class="hi">最後の謎</span>がある。<strong>店の外へ</strong>出よう。');
+        }, 400);
+      }
+    });
+    return;
+  }
+
+  openExamine(hs, () => {
+    if (hs.give && !collected[hs.id]) {
+      collected[hs.id] = true;
+      removeHsRing(hs.id);
+      showItemGet(hs.give, hs.giveDesc || '', () => {
+        giveItem(hs.give);
+        progress++;
+        renderDots();
+      });
+    }
+  });
+}
+
+function openExamine(hs, onClose) {
+  document.getElementById('examScene').innerHTML = hs.examSvg || '';
+  document.getElementById('examDesc').innerHTML = hs.examDesc || '';
+  const okBtn = document.getElementById('examOk');
+
+  if (hs.give && !collected[hs.id]) {
+    okBtn.style.display = '';
+    okBtn.textContent = '手に取る';
+    pendingExam = onClose;
+  } else if (hs.isFinalRiddle) {
+    okBtn.style.display = '';
+    okBtn.textContent = '謎を解く';
+    pendingExam = onClose;
+  } else {
+    okBtn.style.display = 'none';
+    pendingExam = null;
+  }
+  openOv('examineModal');
+}
+
+function examTake() {
+  closeOv('examineModal');
+  if (pendingExam) { const fn = pendingExam; pendingExam = null; fn(); }
+}
+
+/* ══════════════════════════════
+   ITEM GET POPUP
+══════════════════════════════ */
+function showItemGet(itemKey, desc, onClose) {
+  const it = ITEMS[itemKey];
+  document.getElementById('igIcon').textContent = it.icon;
+  document.getElementById('igName').textContent = it.name + ' を入手！';
+  document.getElementById('igDesc').textContent = desc || it.desc;
+  pendingExam = onClose;
+  openOv('itemGetModal');
+}
+
+// itemGetModal close calls this via onclick
+function closeItemGet() {
+  closeOv('itemGetModal');
+  if (pendingExam) { const fn = pendingExam; pendingExam = null; fn(); }
+}
+// override the button
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelector('#itemGetModal .mbtn-ok').onclick = closeItemGet;
+});
+
+/* ══════════════════════════════
+   INVENTORY
+══════════════════════════════ */
+function giveItem(key) {
+  if (!inventory.includes(key)) {
+    inventory.push(key);
+    renderInv();
+    showToast(ITEMS[key].icon + ' ' + ITEMS[key].name);
+  }
+}
+
+function renderInv() {
+  const row = document.getElementById('invRow');
+  row.innerHTML = '';
+  if (!inventory.length) {
+    row.innerHTML = '<span style="font-size:11px;color:var(--muted)">なし</span>';
+    return;
+  }
+  inventory.forEach(k => {
+    const d = document.createElement('div');
+    d.className = 'inv-slot';
+    d.innerHTML = ITEMS[k].icon + `<span class="tip">${ITEMS[k].name}</span>`;
+    d.onclick = () => {
+      if (k === 'cipher') openOv('cipherModal');
+    };
+    row.appendChild(d);
+  });
+}
+
+function removeHsRing(id) {
+  const el = document.getElementById('hsdiv-' + id);
+  if (el) el.querySelector('.hs-ring').style.display = 'none';
+}
+
+/* ══════════════════════════════
+   COMBINE
+══════════════════════════════ */
+function openCombine() {
+  if (inventory.length < 2) { showToast('アイテムが2つ以上必要だ'); return; }
+  combSlots = [null, null];
+  renderCombModal();
+  openOv('combModal');
+}
+
+function renderCombModal() {
+  [0, 1].forEach(i => {
+    const sl = document.getElementById('cs' + i);
+    const ic = document.getElementById('cs' + i + 'i');
+    sl.classList.toggle('fill', !!combSlots[i]);
+    ic.textContent = combSlots[i] ? ITEMS[combSlots[i]].icon : '';
+  });
+  const grid = document.getElementById('ciGrid');
+  grid.innerHTML = '';
+  inventory.forEach(k => {
+    const d = document.createElement('div');
+    d.className = 'ci-btn';
+    d.innerHTML = ITEMS[k].icon + `<span>${ITEMS[k].name}</span>`;
+    d.onclick = () => {
+      if (!combSlots[0]) combSlots[0] = k;
+      else if (!combSlots[1] && combSlots[0] !== k) combSlots[1] = k;
+      renderCombModal();
+    };
+    grid.appendChild(d);
+  });
+  document.getElementById('combOk').disabled = !(combSlots[0] && combSlots[1]);
+}
+
+function clearSlot(i) { combSlots[i] = null; renderCombModal(); }
+
+const RECIPES = {
+  'cipher+memo': {
+    give: 'broth',
+    msg: '暗号板と手帳を照らし合わせると……！<br><span class="hi">金庫の番号「3150」</span>が判明した！<br>今すぐ金庫を開けよう。',
+    consume: ['cipher', 'memo'],
+    desc: '暗号板の記号（⭐=3、🔥=1、💧=5、🌙=0）と手帳を合わせて金庫番号を解読した。',
+  },
+};
+
+function tryCombine() {
+  const pair = [combSlots[0], combSlots[1]].sort().join('+');
+  const recipe = RECIPES[pair];
+  closeOv('combModal');
+  if (recipe) {
+    recipe.consume.forEach(k => { inventory = inventory.filter(x => x !== k); });
+    renderInv();
+    setMsg(recipe.msg);
+    progress++;
+    renderDots();
+    sealBreak(null);
+    showToast('✨ 組み合わせ成功！');
+    // update safe hotspot
+    const safeHs = SCENE_DATA.hall.hotspots.find(h => h.id === 'hs-safe');
+    if (safeHs) safeHs.needItem = 'broth';
+  } else {
+    setMsg('うまく組み合わせられなかった……別の組み合わせを試そう。');
+    showToast('組み合わせ不可');
+  }
+}
+
+/* ══════════════════════════════
+   MOVE MENU
+══════════════════════════════ */
+function openMoveMenu() {
+  const exits = SCENE_DATA[currentScene].exits;
+  if (!exits.length) { setMsg('ここからは移動できない。'); return; }
+  if (exits.length === 1) {
+    doMove(exits[0]);
+    return;
+  }
+  // multiple exits — simple picker via message
+  const frag = exits.map((e, i) => `<span style="cursor:pointer;color:var(--gold);text-decoration:underline;" onclick="doMoveByIndex(${i})">[${e.label}]</span>`).join('　');
+  setMsg('どこへ移動する？　' + frag);
+}
+
+function doMoveByIndex(i) {
+  doMove(SCENE_DATA[currentScene].exits[i]);
+}
+
+function doMove(exit) {
+  if (exit.needItem && !inventory.includes(exit.needItem)) {
+    setMsg(exit.needMsg || 'まだここには行けない。');
+    return;
+  }
+  setMsg('移動中……');
+  setTimeout(() => loadScene(exit.target), 250);
+}
+
+/* ══════════════════════════════
+   INPUT ANSWER
+══════════════════════════════ */
+function openInput(q, answers, onOk) {
+  document.getElementById('inpQ').innerHTML = q;
+  document.getElementById('ansInp').value = '';
+  document.getElementById('ansFb').textContent = '';
+  document.getElementById('ansFb').className = 'ans-fb';
+  pendingAns = { answers, onOk };
+  openOv('inputModal');
+  setTimeout(() => document.getElementById('ansInp').focus(), 100);
+}
+
+function submitAns() {
+  const v = document.getElementById('ansInp').value.trim();
+  const fb = document.getElementById('ansFb');
+  if (pendingAns.answers.includes(v)) {
+    fb.className = 'ans-fb ok';
+    fb.textContent = '── 封印が解かれた ──';
+    setTimeout(() => { closeOv('inputModal'); pendingAns.onOk(); }, 700);
+  } else {
+    fb.className = 'ans-fb ng';
+    fb.textContent = '── 違う。もう一度よく見よ。';
+    document.getElementById('ansInp').select();
+  }
+}
+
+/* ══════════════════════════════
+   SEAL BREAK FX
+══════════════════════════════ */
+function sealBreak(cb) {
+  const el = document.getElementById('sealFx');
+  el.classList.add('show');
+  setTimeout(() => {
+    el.classList.remove('show');
+    if (cb) cb();
+  }, 750);
+}
+
+/* ══════════════════════════════
+   UTIL
+══════════════════════════════ */
+function openOv(id) { document.getElementById(id).classList.add('open'); }
+function closeOv(id) { document.getElementById(id).classList.remove('open'); }
+
+function setMode(m) {
+  ['Use', 'Comb', 'Move'].forEach(x => {
+    document.getElementById('btn' + x).classList.toggle('on', x.toLowerCase().startsWith(m[0]));
+  });
+}
+
+function setMsg(h) { document.getElementById('msgTxt').innerHTML = h; }
+
+let toastT;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function renderDots() {
+  const el = document.getElementById('gDots');
+  el.innerHTML = '';
+  for (let i = 0; i < PROG_MAX; i++) {
+    const d = document.createElement('div');
+    d.className = 'gdot' + (i < progress ? ' done' : i === progress ? ' now' : '');
+    el.appendChild(d);
+  }
+}
+
+function showClear() {
+  go('s-clear');
+  document.getElementById('saviorNo').textContent = 'RYU-' + String((Math.random() * 90000 | 0) + 10000);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('inputModal').classList.contains('open')) submitAns();
+});
+
+/* ══════════════════════════════
+   AUDIO ENGINE (Web Audio API)
+   BGM: procedural ambient music
+   SE:  synthesized sound effects
+══════════════════════════════ */
+const Audio = (() => {
+  let ctx = null;
+  let bgmNodes = [];
+  let bgmGain = null;
+  let enabled = true;
+  let started = false;
+
+  function getCtx() {
+    if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+    return ctx;
+  }
+
+  // ── BGM: ambient 和風ループ ──
+  // 五音音階 (pentatonic minor): D Eb G A C
+  const PENTA = [293.66, 311.13, 392.00, 440.00, 523.25];
+  // 低音ドローン用
+  const DRONE_FREQS = [73.42, 110.00, 146.83]; // D2, A2, D3
+
+  function startBGM() {
+    if (started || !enabled) return;
+    started = true;
+    const ac = getCtx();
+    if (ac.state === 'suspended') ac.resume();
+
+    bgmGain = ac.createGain();
+    bgmGain.gain.setValueAtTime(0, ac.currentTime);
+    bgmGain.gain.linearRampToValueAtTime(0.18, ac.currentTime + 3);
+    bgmGain.connect(ac.destination);
+
+    // ── ドローン (持続低音) ──
+    DRONE_FREQS.forEach((freq, i) => {
+      const osc = ac.createOscillator();
+      const g   = ac.createGain();
+      const lfo = ac.createOscillator();
+      const lfoG = ac.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      lfo.type = 'sine';
+      lfo.frequency.value = 0.12 + i * 0.05;
+      lfoG.gain.value = 0.004;
+
+      lfo.connect(lfoG);
+      lfoG.connect(osc.frequency);
+      g.gain.value = i === 0 ? 0.55 : 0.25;
+      osc.connect(g);
+      g.connect(bgmGain);
+      lfo.start();
+      osc.start();
+      bgmNodes.push(osc, lfo);
+    });
+
+    // ── アンビエントパッド ──
+    // 和音: D minor 7
+    [146.83, 175.00, 220.00, 261.63].forEach((freq, i) => {
+      const osc = ac.createOscillator();
+      const g   = ac.createGain();
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
+      // LFO でゆらぎ
+      const lfo = ac.createOscillator();
+      const lfoG = ac.createGain();
+      lfo.frequency.value = 0.08 + i * 0.03;
+      lfoG.gain.value = 0.8;
+      lfo.connect(lfoG); lfoG.connect(osc.frequency);
+      g.gain.value = 0.07;
+      osc.connect(g); g.connect(bgmGain);
+      lfo.start(); osc.start();
+      bgmNodes.push(osc, lfo);
+    });
+
+    // ── メロディ: ランダム五音音階ノート ──
+    scheduleMelody(ac);
+  }
+
+  function scheduleMelody(ac) {
+    if (!enabled || !started) return;
+    const now = ac.currentTime;
+    // 2〜5秒ごとにランダムなノート
+    const interval = 2.2 + Math.random() * 3.2;
+    const freq = PENTA[Math.floor(Math.random() * PENTA.length)] * (Math.random() < 0.4 ? 2 : 1);
+    const dur  = 1.2 + Math.random() * 1.8;
+
+    const osc = ac.createOscillator();
+    const g   = ac.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    g.gain.setValueAtTime(0, now);
+    g.gain.linearRampToValueAtTime(0.09, now + 0.08);
+    g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+    osc.connect(g); g.connect(bgmGain);
+    osc.start(now);
+    osc.stop(now + dur);
+
+    setTimeout(() => scheduleMelody(ac), interval * 1000);
+  }
+
+  function stopBGM() {
+    if (bgmGain) {
+      bgmGain.gain.linearRampToValueAtTime(0, getCtx().currentTime + 1.5);
+    }
+    setTimeout(() => {
+      bgmNodes.forEach(n => { try { n.stop(); } catch(e){} });
+      bgmNodes = [];
+      started = false;
+    }, 1600);
+  }
+
+  // ── SE ──
+  function se(type) {
+    if (!enabled) return;
+    const ac = getCtx();
+    if (ac.state === 'suspended') ac.resume();
+
+    switch(type) {
+      case 'tap': {
+        // コツン という木の音
+        const buf = ac.createBuffer(1, ac.sampleRate * 0.08, ac.sampleRate);
+        const d = buf.getChannelData(0);
+        for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ac.sampleRate * 0.015));
+        const src = ac.createBufferSource();
+        const g = ac.createGain(); g.gain.value = 0.22;
+        const f = ac.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 800; f.Q.value = 2;
+        src.buffer = buf; src.connect(f); f.connect(g); g.connect(ac.destination);
+        src.start();
+        break;
+      }
+      case 'item': {
+        // キラキラ上昇音
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+          const osc = ac.createOscillator();
+          const g   = ac.createGain();
+          const t   = ac.currentTime + i * 0.08;
+          osc.type = 'sine'; osc.frequency.value = freq;
+          g.gain.setValueAtTime(0, t);
+          g.gain.linearRampToValueAtTime(0.15, t + 0.04);
+          g.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+          osc.connect(g); g.connect(ac.destination);
+          osc.start(t); osc.stop(t + 0.35);
+        });
+        break;
+      }
+      case 'seal': {
+        // ドーン という封印解除音
+        const osc1 = ac.createOscillator();
+        const osc2 = ac.createOscillator();
+        const g    = ac.createGain();
+        const dist = ac.createWaveShaper();
+        const curve = new Float32Array(256);
+        for (let i = 0; i < 256; i++) curve[i] = (i / 128 - 1) < 0 ? -0.8 : 0.8;
+        dist.curve = curve;
+        osc1.type = 'sawtooth'; osc1.frequency.value = 80;
+        osc2.type = 'sine';     osc2.frequency.value = 160;
+        osc1.frequency.exponentialRampToValueAtTime(40, ac.currentTime + 0.6);
+        g.gain.setValueAtTime(0.4, ac.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.8);
+        osc1.connect(dist); osc2.connect(dist); dist.connect(g); g.connect(ac.destination);
+        osc1.start(); osc2.start();
+        osc1.stop(ac.currentTime + 0.8); osc2.stop(ac.currentTime + 0.8);
+        break;
+      }
+      case 'wrong': {
+        // ブッ という失敗音
+        const osc = ac.createOscillator();
+        const g   = ac.createGain();
+        osc.type = 'square'; osc.frequency.value = 180;
+        osc.frequency.linearRampToValueAtTime(100, ac.currentTime + 0.2);
+        g.gain.setValueAtTime(0.15, ac.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.25);
+        osc.connect(g); g.connect(ac.destination);
+        osc.start(); osc.stop(ac.currentTime + 0.25);
+        break;
+      }
+      case 'clear': {
+        // クリアファンファーレ
+        const melody = [
+          {f:523.25, t:0},
+          {f:659.25, t:0.15},
+          {f:783.99, t:0.30},
+          {f:1046.50,t:0.45},
+          {f:880.00, t:0.65},
+          {f:1046.50,t:0.80},
+        ];
+        melody.forEach(({f, t}) => {
+          const osc = ac.createOscillator();
+          const g   = ac.createGain();
+          const start = ac.currentTime + t;
+          osc.type = 'triangle'; osc.frequency.value = f;
+          g.gain.setValueAtTime(0, start);
+          g.gain.linearRampToValueAtTime(0.2, start + 0.05);
+          g.gain.exponentialRampToValueAtTime(0.001, start + 0.4);
+          osc.connect(g); g.connect(ac.destination);
+          osc.start(start); osc.stop(start + 0.4);
+        });
+        break;
+      }
+      case 'move': {
+        // シュッ という移動音
+        const buf = ac.createBuffer(1, ac.sampleRate * 0.12, ac.sampleRate);
+        const d = buf.getChannelData(0);
+        for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ac.sampleRate * 0.04));
+        const src = ac.createBufferSource();
+        const g = ac.createGain(); g.gain.value = 0.12;
+        const f = ac.createBiquadFilter(); f.type = 'highpass'; f.frequency.value = 2000;
+        src.buffer = buf; src.connect(f); f.connect(g); g.connect(ac.destination);
+        src.start();
+        break;
+      }
+      case 'unlock': {
+        // カチャ という解錠音
+        [1200, 1800, 2400].forEach((freq, i) => {
+          const buf = ac.createBuffer(1, ac.sampleRate * 0.06, ac.sampleRate);
+          const d = buf.getChannelData(0);
+          for (let j = 0; j < d.length; j++) d[j] = (Math.random()*2-1) * Math.exp(-j/(ac.sampleRate*0.01));
+          const src = ac.createBufferSource();
+          const g = ac.createGain(); g.gain.value = 0.18;
+          const f = ac.createBiquadFilter(); f.type='bandpass'; f.frequency.value=freq; f.Q.value=3;
+          const t = ac.currentTime + i * 0.06;
+          src.buffer = buf; src.connect(f); f.connect(g); g.connect(ac.destination);
+          src.start(t);
+        });
+        break;
+      }
+    }
+  }
+
+  function toggle() {
+    enabled = !enabled;
+    if (!enabled) stopBGM();
+    else if (started === false) startBGM();
+    return enabled;
+  }
+
+  return { startBGM, stopBGM, se, toggle, isEnabled: () => enabled };
+})();
+
+// BGM・SEをゲームフローに組み込む
+// タイトル・ストーリー画面でのBGM開始
+const _origGo = go;
+window.go = function(id) {
+  _origGo(id);
+  if (id === 's-story' || id === 's-title') {
+    Audio.startBGM();
+  }
+  if (id === 's-clear') {
+    setTimeout(() => Audio.se('clear'), 300);
+  }
+};
+
+// スタート
+const _origStart = startGame;
+window.startGame = function() {
+  Audio.startBGM();
+  _origStart();
+};
+
+// ホットスポットタップ時
+const _origOnHotspot = onHotspot;
+window.onHotspot = function(hs) {
+  Audio.se('tap');
+  _origOnHotspot(hs);
+};
+
+// アイテム取得時
+const _origGiveItem = giveItem;
+window.giveItem = function(key) {
+  Audio.se('item');
+  _origGiveItem(key);
+};
+
+// 封印解除
+const _origSealBreak = sealBreak;
+window.sealBreak = function(cb) {
+  Audio.se('seal');
+  _origSealBreak(cb);
+};
+
+// 移動時
+const _origDoMove = doMove;
+window.doMove = function(exit) {
+  Audio.se('move');
+  _origDoMove(exit);
+};
+
+// 解錠時
+const _origTryCombine = tryCombine;
+window.tryCombine = function() {
+  Audio.se('unlock');
+  _origTryCombine();
+};
+
+// 不正解時
+const _origSubmitAns = submitAns;
+window.submitAns = function() {
+  const v = document.getElementById('ansInp').value.trim();
+  if (pendingAns && !pendingAns.answers.includes(v)) {
+    Audio.se('wrong');
+  }
+  _origSubmitAns();
+};
+
+// ── ミュートボタン追加 ──
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.createElement('button');
+  btn.id = 'muteBtn';
+  btn.textContent = '🔊';
+  btn.style.cssText = `
+    position:fixed;bottom:16px;right:16px;z-index:200;
+    background:rgba(26,22,18,.85);border:1px solid #2e2820;
+    color:#c8a84b;font-size:16px;width:36px;height:36px;
+    border-radius:50%;cursor:pointer;display:flex;
+    align-items:center;justify-content:center;
+    backdrop-filter:blur(4px);
+  `;
+  btn.onclick = () => {
+    const on = Audio.toggle();
+    btn.textContent = on ? '🔊' : '🔇';
+  };
+  document.body.appendChild(btn);
+
+  // itemGetModal のボタン修正
+  const igOk = document.querySelector('#itemGetModal .mbtn-ok');
+  if (igOk) igOk.onclick = closeItemGet;
+});
+</script>
+</body>
+</html>
